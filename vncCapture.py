@@ -1,8 +1,8 @@
 import sys
-#import requests
 import shodan
 import shutil
 from vncdotool import api
+import config
 
 def main(argv):
     def screenShot(ipAddress, port):
@@ -26,8 +26,7 @@ def main(argv):
         print("Disconnecting Client")
         client.disconnect()
     
-    SHODAN_API_KEY = "----PUT API KEY HERE----"
-    ShodanAPI = shodan.Shodan(SHODAN_API_KEY)
+    ShodanAPI = shodan.Shodan(config.SHODAN_API_KEY)
     serverIndex=0
     try:
         # Further refine search by adding things like country:"CN"
