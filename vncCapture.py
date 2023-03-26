@@ -1,33 +1,34 @@
 import sys
-#import requests
 import shodan
 import shutil
 from vncdotool import api
+import config
+
+def screenShot(ipAddress, port):
+    connect_string = ipAddress + '::' + port
+    print(connect_string)
+    filename = 'static/RESULTS/' + ipAddress + '_' + port + '.png'
+    try:
+        client = api.connect(connect_string , password=None)
+        client.timeout = 30
+    except:
+        print('Connect Failed')
+        return
+    try:
+        print("Attempting screen capture")
+        client.captureScreen(filename)
+        print("SUCCESS")
+    except:
+        print('Timed out')
+        shutil.copy('DEFAULT.png',filename)
+        shutil.move(filename, '_TimeOut_' + filename)
+        client.disconnect()
+    print("Disconnecting Client")
+    client.disconnect()
 
 def main(argv):
-    def screenShot(ipAddress, port):
-        connect_string = ipAddress + '::' + port
-        print(connect_string)
-        filename = 'RESULTS/' + ipAddress + '_' + port + '.png'
-        try:
-            client = api.connect(connect_string , password=None)
-            client.timeout = 30
-        except:
-            print('Connect Failed')
-            return
-        try:
-            print("Attempting screen capture")
-            client.captureScreen(filename)
-            print("SUCCESS")
-        except:
-            print('Timed out')
-            shutil.copy('DEFAULT.png',filename)
-            client.disconnect()
-        print("Disconnecting Client")
-        client.disconnect()
     
-    SHODAN_API_KEY = "----PUT API KEY HERE----"
-    ShodanAPI = shodan.Shodan(SHODAN_API_KEY)
+    ShodanAPI = shodan.Shodan(config.SHODAN_API_KEY)
     serverIndex=0
     try:
         # Further refine search by adding things like country:"CN"
@@ -51,5 +52,6 @@ def main(argv):
             screenShot(server,'5901')
     except shodan.APIError:
         print('Error: Shodan API Error')
+
 if __name__ == "__main__":
     main(sys.argv[1:])
