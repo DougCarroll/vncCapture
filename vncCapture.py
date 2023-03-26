@@ -7,7 +7,7 @@ import config
 def screenShot(ipAddress, port):
     connect_string = ipAddress + '::' + port
     print(connect_string)
-    filename = 'RESULTS/' + ipAddress + '_' + port + '.png'
+    filename = 'static/RESULTS/' + ipAddress + '_' + port + '.png'
     try:
         client = api.connect(connect_string , password=None)
         client.timeout = 30
@@ -21,6 +21,7 @@ def screenShot(ipAddress, port):
     except:
         print('Timed out')
         shutil.copy('DEFAULT.png',filename)
+        shutil.move(filename, '_TimeOut_' + filename)
         client.disconnect()
     print("Disconnecting Client")
     client.disconnect()
